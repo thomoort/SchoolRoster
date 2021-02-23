@@ -34,15 +34,6 @@ public class RosterGenerator {
 
             for (Group g : groups) {
                 Roster roster = g.getRoster();
-                int groupWeight = g.getRoster().getRosterLessonsTotalWeight();
-                int desiredWeight = groupWeight / periodCounter;
-
-                ArrayList<Integer> otherWeights = otherWeights(g);
-
-                if (groupWeight > Collections.max(otherWeights)) {
-                    int weightDiff = groupWeight - Collections.max(otherWeights);
-                    desiredWeight = Math.min(3, Math.max(desiredWeight - weightDiff, 1));
-                }
 
                 ArrayList<Teacher> avlbTeachers = getAvailableTeachersForPeriod(p);
                 ArrayList<Classroom> avlbClassrooms = getAvailableClassroomsForPeriod(p);
@@ -66,6 +57,15 @@ public class RosterGenerator {
         }
     }
 
+    /**
+     * A (recursive) method which chooses the next subject based on what's available, and given the current lessons, which one needs more representation in the roster.
+     * Uses other groups to find if they need the subject more, in which case the teacher and classroom are removed from the available pool, and the method is called again without them
+     * @param group The group for which the subject is requested
+     * @param subjectRepMap A hashmap of subject representation with current rep, desired rep
+     * @param avlbTeachers A list of available teachers
+     * @param avlbClassrooms A list of available classrooms
+     * @return The chosen subject
+     */
     public Subject selectSubjectForGroup(Group group, HashMap<Subject, Float[]> subjectRepMap,
                                          List<Teacher> avlbTeachers, List<Classroom> avlbClassrooms) {
         Subject selectedSubject = null;
@@ -74,17 +74,22 @@ public class RosterGenerator {
 
         float repDiff = 0;
         for (Subject s : subjectRepMap.keySet()) {
-
+            //Continues if there's no teacher or classroom available for the current looped subject.
             if (s.getQualifiedTeachers().stream().noneMatch(avlbTeachersCopy::contains) ||
                     avlbClassroomsCopy.stream().noneMatch(c -> c.getClassroomType() == s.getRequiredClassroomType())) {
                 continue;
             }
 
+            //Note on representation: current rep is a percentage float between 0.0 and 1.0
+            //The desired rep is based on subject weight / weight of all subjects, so 3 / 12 = .25
+            //currRepDiff is the current rep - the desired, so the lowest value (usually negative) is the subject most in need of another lesson.
+            //OthersMaxRepDiff does the same calc for all other groups, but returns only the greatest difference, so we know if another group needs the lesson more
             float currentRep = subjectRepMap.get(s)[0];
             float desireRep = subjectRepMap.get(s)[1];
             float currRepDiff = currentRep - desireRep;
             float othersMaxRepDiff = getOtherGroupsMaxDiffForSubject(group, s);
 
+            //If others need the subject more, and the list of availalbe teachers & classrooms is not 1, then remove the teacher and classroom and look again
             if ((othersMaxRepDiff < currRepDiff) && !(avlbTeachersCopy.size() <= 1 || avlbClassroomsCopy.size() <= 1)) {
                 avlbTeachersCopy.remove(s.getQualifiedTeachers().get(0));
                 List<Classroom> possibleUsed = avlbClassroomsCopy.stream().filter(c -> c.getClassroomType() == s.getRequiredClassroomType()).collect(Collectors.toList());
@@ -93,22 +98,13 @@ public class RosterGenerator {
                 repDiff = currRepDiff;
             }
 
+            //If no subject yet, or this one has a bigger difference in current representation vs desired representation
             if (selectedSubject == null || currRepDiff < repDiff) {
                 selectedSubject = s;
                 repDiff = currRepDiff;
             }
         }
         return selectedSubject;
-    }
-
-    public ArrayList<Integer> otherWeights(Group excludedGroup) {
-        ArrayList<Integer> others = new ArrayList<>();
-        for (Group g : groups) {
-            if (g != excludedGroup) {
-                others.add(g.getRoster().getRosterLessonsTotalWeight());
-            }
-        }
-        return others;
     }
 
     public float getOtherGroupsMaxDiffForSubject(Group excludedGroup, Subject subject) {
@@ -163,9 +159,5 @@ public class RosterGenerator {
         return availableClassrooms;
     }
 
-
-    public Roster generateRoster() {
-        return null;
-    }
 
 }
