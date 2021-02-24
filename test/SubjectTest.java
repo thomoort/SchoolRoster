@@ -18,6 +18,11 @@ public class SubjectTest {
     Subject s3 = new Subject("Gym", 1, ClassroomType.GYM);
 
     @Test
+    public void testSubjectWeight() {
+        assertSame(s1.getWeight(), 3);
+    }
+
+    @Test
     public void testSubjectGetters() {
         assertEquals(s1.getName(), "English");
         assertEquals(s1.getRequiredClassroomType(), ClassroomType.BASIC);
@@ -56,9 +61,7 @@ public class SubjectTest {
         s1.addQualifiedTeacher(t1);
         assertSame(s1.getQualifiedTeachers().get(0), t1);
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->{
-           s1.addQualifiedTeacher(t1);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> s1.addQualifiedTeacher(t1));
 
         String expectedMessage = "Teacher already qualified to teach subject";
         String actualMessage = exception.getMessage();

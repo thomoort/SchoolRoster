@@ -1,6 +1,4 @@
-import com.company.ClassroomType;
-import com.company.Teacher;
-import com.company.Subject;
+import com.company.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,6 +10,11 @@ public class TeacherTest {
     Subject s1 = new Subject("English", 3, ClassroomType.BASIC);
     Subject s2 = new Subject("Science", 2, ClassroomType.SCIENCE);
     Subject s3 = new Subject("Gym", 1, ClassroomType.GYM);
+
+    Group group = new Group("Group 1", 10);
+    Classroom classroom = new Classroom("1.1", ClassroomType.BASIC);
+    Period period = new Period(Period.Day.MONDAY, Period.Block.FIRST);
+    Lesson lesson = new Lesson(t1, group, classroom, s1, period);
 
     @Test
     public void testTeacherGetters() {
@@ -69,9 +72,7 @@ public class TeacherTest {
     public void testAddingAlreadyAssignedSubjectException() {
         t1.addAssignedSubject(s1);
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            t1.addAssignedSubject(s1);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> t1.addAssignedSubject(s1));
 
         String expectedMessage = "Subject already assigned to teacher";
         String actualMessage = exception.getMessage();
@@ -110,6 +111,14 @@ public class TeacherTest {
         t1.addAssignedSubjects(new Subject[]{s1, s2});
         assertArrayEquals(t1.getAssignedSubjects().toArray(), new Subject[]{s1, s2});
         assertSame(s1.getQualifiedTeachers().get(0), t1);
+    }
+
+    @Test
+    public void testAddLesson() {
+        t1.addToRoster(lesson);
+        assertSame(t1.getRoster().getLessonsList().get(0), lesson);
+        t1.removeFromRoster(lesson);
+        assertTrue(t1.getRoster().getLessonsList().isEmpty());
     }
 
 }

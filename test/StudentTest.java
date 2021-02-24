@@ -1,11 +1,14 @@
-import com.company.Student;
-import com.company.Group;
+import com.company.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StudentTest {
 
     Group g1 = new Group("Group 1", 10);
+    Teacher teacher = new Teacher("Alexander H", 1757);
+    Classroom classroom = new Classroom("1.1", ClassroomType.BASIC);
+    Subject subject = new Subject("English", 3, ClassroomType.BASIC);
+    Period period = new Period(Period.Day.MONDAY, Period.Block.FIRST);
 
     @Test
     public void testStudentCreateNoGroup() {
@@ -49,6 +52,14 @@ public class StudentTest {
         g1.removeStudentFromGroup(s);
         assertTrue(g1.getStudents().isEmpty());
         assertNull(s.getGroup());
+    }
+
+    @Test
+    public void testStudentGroupRoster() {
+        Student s = new Student("Thom", 1998, g1);
+        Lesson lesson = new Lesson(teacher, g1, classroom, subject, period);
+        g1.addToRoster(lesson);
+        assertSame(s.getGroupRoster(), g1.getRoster());
     }
 
 }
