@@ -5,13 +5,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
 
-    private static ArrayList<Classroom> classrooms = new ArrayList<Classroom>();
-    private static ArrayList<Subject> currentSubjects = new ArrayList<Subject>();
-    private static ArrayList<Teacher> teachers = new ArrayList<Teacher>();
-    private static ArrayList<Group> groups = new ArrayList<Group>();
-    private static ArrayList<Lesson> lessons = new ArrayList<Lesson>();
-    private static ArrayList<Period> periods = new ArrayList<Period>();
-    private static ArrayList<Student> students = new ArrayList<Student>();
+    private final static ArrayList<Classroom> classrooms = new ArrayList<>();
+    private final static ArrayList<Subject> currentSubjects = new ArrayList<>();
+    private final static ArrayList<Teacher> teachers = new ArrayList<>();
+    private final static ArrayList<Group> groups = new ArrayList<>();
+    private final static ArrayList<Lesson> lessons = new ArrayList<>();
+    private final static ArrayList<Period> periods = new ArrayList<>();
+    private final static ArrayList<Student> students = new ArrayList<>();
 
     public static void main(String[] args) {
 	// write your code here
@@ -35,20 +35,19 @@ public class Main {
                 periods, students);
         rosterGenerator.generateRostersForGroups();
         for (Group g : groups) {
-            System.out.println("\n");
-            System.out.printf("%s roster:%n", g.getName());
-            for (Lesson l : g.getRoster().getLessonsList()) {
-                System.out.printf("%s,%s,%s,%s,%s%n", l.getPeriod().getDayString(), l.getPeriod().getBlockString(),
-                        l.getTeacher().getName(), l.getSubject().getName(), l.getClassroom().getCode());
-            }
+            printRoster(g.getName(), g.getRoster());
         }
         for (Teacher t : teachers) {
-            System.out.println("\n");
-            System.out.printf("%s roster:%n", t.getName());
-            for (Lesson l : t.getRoster().getLessonsList()) {
-                System.out.printf("%s,%s,%s,%s,%s%n", l.getPeriod().getDayString(), l.getPeriod().getBlockString(),
-                        l.getTeacher().getName(), l.getSubject().getName(), l.getClassroom().getCode());
-            }
+            printRoster(t.getName(), t.getRoster());
+        }
+    }
+
+    private static void printRoster(String name, Roster roster) {
+        System.out.println("\n");
+        System.out.printf("%s roster:%n", name);
+        for (Lesson l : roster.getLessonsList()) {
+            System.out.printf("%s,%s,%s,%s,%s%n", l.getPeriod().getDayString(), l.getPeriod().getBlockString(),
+                    l.getTeacher().getName(), l.getSubject().getName(), l.getClassroom().getCode());
         }
     }
 
@@ -78,9 +77,9 @@ public class Main {
         teachers.add(teacher3);
 
         teacher1.addAssignedSubjects( new Subject[]{currentSubjects.get(0), currentSubjects.get(1), currentSubjects.get(2)});
-//        teacher1.addAssignedSubjects( new Subject[]{currentSubjects.get(0), currentSubjects.get(1)});
+        teacher1.addAssignedSubjects( new Subject[]{currentSubjects.get(0), currentSubjects.get(1)});
         teacher2.addAssignedSubjects( new Subject[]{currentSubjects.get(3), currentSubjects.get(4), currentSubjects.get(5)});
-//        teacher2.addAssignedSubjects( new Subject[]{currentSubjects.get(2), currentSubjects.get(3)});
+        teacher2.addAssignedSubjects( new Subject[]{currentSubjects.get(2), currentSubjects.get(3)});
         teacher3.addAssignedSubjects(new Subject[]{currentSubjects.get(0), currentSubjects.get(2), currentSubjects.get(4)});
     }
 

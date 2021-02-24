@@ -8,7 +8,7 @@ public class Group {
 
     private String name;
     private int maxCapacity;
-    private ArrayList<Student> students = new ArrayList<Student>();
+    private ArrayList<Student> students = new ArrayList<>();
     private Roster roster = new Roster();
 
     public Group(String name, int maxCapacity) {
@@ -39,6 +39,13 @@ public class Group {
         roster.addLesson(lesson);
         for (Student s : students) {
             s.addToRoster(lesson);
+        }
+    }
+
+    public void removeFromRoster(Lesson lesson) {
+        roster.removeLesson(lesson);
+        for (Student s : students) {
+            s.removeFromRoster(lesson);
         }
     }
 

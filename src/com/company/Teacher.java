@@ -51,6 +51,8 @@ public class Teacher {
         roster.addLesson(lesson);
     }
 
+    public void removeFromRoster(Lesson lesson) { roster.removeLesson(lesson);}
+
     /**
      * Adds the subject to this teachers' assigned subjects.
      * It then adds this teacher to the subjects' qualifiedTeachers list.

@@ -30,6 +30,10 @@ public class Student {
         roster.addLesson(lesson);
     }
 
+    public void removeFromRoster(Lesson lesson) {
+        roster.removeLesson(lesson);
+    }
+
     public Roster getRoster() {
         return roster;
     }

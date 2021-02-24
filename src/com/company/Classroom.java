@@ -23,6 +23,10 @@ public class Classroom {
         roster.addLesson(l);
     }
 
+    public void removeFromRoster(Lesson lesson) {
+        roster.removeLesson(lesson);
+    }
+
     public Roster getRoster() {
         return roster;
     }

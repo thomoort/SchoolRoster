@@ -14,8 +14,6 @@ public class RosterGenerator {
     private ArrayList<Period> periods;
     private ArrayList<Student> students;
 
-//    private Roster roster = new Roster();
-
     public RosterGenerator(ArrayList<Classroom> classrooms, ArrayList<Subject> currentSubjects, ArrayList<Teacher> teachers, ArrayList<Group> groups, ArrayList<Lesson> lessons, ArrayList<Period> periods, ArrayList<Student> students) {
         this.classrooms = classrooms;
         this.currentSubjects = currentSubjects;
@@ -27,32 +25,25 @@ public class RosterGenerator {
     }
 
     public void generateRostersForGroups() {
-        int periodCounter = 0;
-
         for (Period p : periods) {
-            periodCounter++;
-
             for (Group g : groups) {
-                Roster roster = g.getRoster();
 
+                Roster roster = g.getRoster();
                 ArrayList<Teacher> avlbTeachers = getAvailableTeachersForPeriod(p);
                 ArrayList<Classroom> avlbClassrooms = getAvailableClassroomsForPeriod(p);
-
-                /*
-                Creates a hashmap of subjects and a float array, existing of the current percentage representation and desired representation
-                The representation is based on the how often the subject is given during the week, and it's desired rep is derived from it's weight and the total weight of subjects
-                It only checks for the current group
-                 */
                 HashMap<Subject, Float[]> subjectRepresentationPercentages = getSubjectRepresentationPercentages(g);
 
+                try {
+                    Subject selectedSubject = selectSubjectForGroup(g, subjectRepresentationPercentages, avlbTeachers, avlbClassrooms);
+                    Teacher selectedTeacher = selectedSubject.getQualifiedTeachers().stream().filter(avlbTeachers::contains).collect(Collectors.toList()).get(0);
+                    List<Classroom> possibleClassrooms = avlbClassrooms.stream().filter(c -> c.getClassroomType() == selectedSubject.getRequiredClassroomType()).collect(Collectors.toList());
+                    Classroom selectedClassroom = possibleClassrooms.get(0);
+                    Lesson generatedLesson = new Lesson(selectedTeacher, g, selectedClassroom, selectedSubject, p);
+                    generatedLesson.assignLessonToOthers();
+                } catch (NullPointerException e) {
+                    System.out.println("No lesson could be created for " + g.getName() + " on " + p.getDayString() +  ", " + p.getBlockString());
+                }
 
-                Subject selectedSubject = selectSubjectForGroup(g, subjectRepresentationPercentages, avlbTeachers, avlbClassrooms);
-
-                Teacher selectedTeacher = selectedSubject.getQualifiedTeachers().stream().filter(avlbTeachers::contains).collect(Collectors.toList()).get(0);
-                List<Classroom> possibleClassrooms = avlbClassrooms.stream().filter(c -> c.getClassroomType() == selectedSubject.getRequiredClassroomType()).collect(Collectors.toList());
-                Classroom selectedClassroom = possibleClassrooms.get(0);
-
-                Lesson generatedLesson = new Lesson(selectedTeacher, g, selectedClassroom, selectedSubject, p);
             }
         }
     }
@@ -80,10 +71,10 @@ public class RosterGenerator {
                 continue;
             }
 
-            //Note on representation: current rep is a percentage float between 0.0 and 1.0
-            //The desired rep is based on subject weight / weight of all subjects, so 3 / 12 = .25
-            //currRepDiff is the current rep - the desired, so the lowest value (usually negative) is the subject most in need of another lesson.
-            //OthersMaxRepDiff does the same calc for all other groups, but returns only the greatest difference, so we know if another group needs the lesson more
+            /*Note on representation: current rep is a percentage float between 0.0 and 1.0
+            The desired rep is based on subject weight / weight of all subjects, so 3 / 12 = .25
+            currRepDiff is the current rep - the desired, so the lowest value (usually negative) is the subject most in need of another lesson.
+            OthersMaxRepDiff does the same calc for all other groups, but returns only the greatest difference, so we know if another group needs the lesson more */
             float currentRep = subjectRepMap.get(s)[0];
             float desireRep = subjectRepMap.get(s)[1];
             float currRepDiff = currentRep - desireRep;
@@ -104,9 +95,19 @@ public class RosterGenerator {
                 repDiff = currRepDiff;
             }
         }
+        if (selectedSubject == null) {
+            throw new NullPointerException("No suitable subject found!");
+        }
         return selectedSubject;
     }
 
+    /**
+     * Get's called by a group to see if there's another group (doesn't matter which) which has a higher difference in representation,
+     * if it does then the subject will not be given to the calling group.
+     * @param excludedGroup the group for which the method is called, excluding them so they don't compare to themselves.
+     * @param subject The subject for which the greatest representation difference is requested
+     * @return the biggest difference in curr rep vs des rep for all groups.
+     */
     public float getOtherGroupsMaxDiffForSubject(Group excludedGroup, Subject subject) {
         float maxDiff = 0;
         for (Group g : groups.stream().filter(gr -> gr != excludedGroup).collect(Collectors.toList())) {
@@ -120,12 +121,17 @@ public class RosterGenerator {
         return maxDiff;
     }
 
+    /**
+     * This method assigns the current and desired representation to all subjects for a group.
+     * The representation is based on the how often the subject is given during the week, and it's desired rep is derived from it's weight and the total weight of subjects
+     * This is used in {@link RosterGenerator#generateRostersForGroups()} & {@link RosterGenerator#getOtherGroupsMaxDiffForSubject(Group, Subject)}
+     * @param group The group for which to get the subject rep map
+     * @return A HashMap containing a key value pair of subject, [current rep, desired rep]
+     */
     public HashMap<Subject, Float[]> getSubjectRepresentationPercentages(Group group) {
         HashMap<Subject, Float[]> subjectRepresentationPercentages = new HashMap<>();
         Roster roster = group.getRoster();
         for (Subject s : currentSubjects) {
-            //Filter out subjects with no current available teacher or classroom
-
             float desiredSubjectRep = (float) s.getWeight() / Subject.TOTAL_WEIGHT_DIST;
             if (roster.getLessonsList().stream().anyMatch(l -> l.getSubject() == s)) {
                 float currSubjectRep = (float) roster.getSubjectOccurrence(s) / Roster.LESSONS_PER_WEEK;

@@ -29,14 +29,6 @@ public class Roster {
         return Arrays.stream(lessons[Period.getDayInt(day)]).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    public int getRosterLessonsTotalWeight() {
-        int totalWeight = 0;
-        for (Lesson l : getLessonsList()) {
-            totalWeight += l.getSubject().getWeight();
-        }
-        return totalWeight;
-    }
-
     public int getSubjectOccurrence(Subject subject) {
         int occurrence = 0;
         for (Lesson l : getLessonsList()) {
