@@ -34,13 +34,7 @@ public class Roster {
     }
 
     public int getSubjectOccurrence(Subject subject) {
-        int occurrence = 0;
-        for (Lesson l : getLessonsList()) {
-            if (l.getSubject().equals(subject)) {
-                occurrence++;
-            }
-        }
-        return occurrence;
+        return (int) getLessonsList().stream().filter(l -> l.getSubject() == subject).count();
     }
 
     public void addLesson(Lesson lesson) {
