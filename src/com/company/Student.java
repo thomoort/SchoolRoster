@@ -1,6 +1,6 @@
 package com.company;
 
-public class Student {
+public class Student extends Roster {
 
     private String name;
     private int birthYear;
@@ -24,18 +24,6 @@ public class Student {
     private String setCode() {
         String[] splitName = this.name.split(" ");
         return "%s%d".formatted(splitName[0], birthYear);
-    }
-
-    public void addToRoster(Lesson lesson) {
-        roster.addLesson(lesson);
-    }
-
-    public void removeFromRoster(Lesson lesson) {
-        roster.removeLesson(lesson);
-    }
-
-    public Roster getRoster() {
-        return roster;
     }
 
     public Roster getGroupRoster() {

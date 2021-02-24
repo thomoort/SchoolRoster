@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Group {
+public class Group extends Roster{
 
     private String name;
     private int maxCapacity;
@@ -31,21 +31,18 @@ public class Group {
         return result.get(0);
     }
 
-    public Roster getRoster() {
-        return roster;
-    }
-
-    public void addToRoster(Lesson lesson) {
-        roster.addLesson(lesson);
+    public void addLesson(Lesson lesson) {
+        super.addLesson(lesson);
         for (Student s : students) {
-            s.addToRoster(lesson);
+            s.addLesson(lesson);
         }
     }
 
-    public void removeFromRoster(Lesson lesson) {
-        roster.removeLesson(lesson);
+    @Override
+    public void removeLesson(Lesson lesson) {
+        super.removeLesson(lesson);
         for (Student s : students) {
-            s.removeFromRoster(lesson);
+            s.removeLesson(lesson);
         }
     }
 

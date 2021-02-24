@@ -80,13 +80,13 @@ public class GroupTest {
 
     @Test
     public void testAddAndRemoveLessonInGroup() {
-        assertSame(group3.getRoster().getLessonsList().size(), 0);
-        group3.addToRoster(lesson);
-        assertSame(group3.getRoster().getLessonsList().size(), 1);
-        assertSame(group3.getRoster().getLessonsList().get(0), s2.getRoster().getLessonsList().get(0));
-        group3.removeFromRoster(lesson);
-        assertSame(group3.getRoster().getLessonsList().size(), 0);
-        assertArrayEquals(group3.getRoster().getLessonsList().toArray(), s2.getRoster().getLessonsList().toArray());
+        assertSame(group3.getLessonsList().size(), 0);
+        group3.addLesson(lesson);
+        assertSame(group3.getLessonsList().size(), 1);
+        assertSame(group3.getLessonsList().get(0), s2.getLessonsList().get(0));
+        group3.removeLesson(lesson);
+        assertSame(group3.getLessonsList().size(), 0);
+        assertArrayEquals(group3.getLessonsList().toArray(), s2.getLessonsList().toArray());
     }
 
 }

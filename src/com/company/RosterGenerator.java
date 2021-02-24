@@ -28,11 +28,15 @@ public class RosterGenerator {
         for (Period p : periods) {
             for (Group g : groups) {
 
-                Roster roster = g.getRoster();
                 ArrayList<Teacher> avlbTeachers = getAvailableTeachersForPeriod(p);
                 ArrayList<Classroom> avlbClassrooms = getAvailableClassroomsForPeriod(p);
                 HashMap<Subject, Float[]> subjectRepresentationPercentages = getSubjectRepresentationPercentages(g);
 
+                /*
+                Currently, groups withhold taking gym until the last period, this means that group2 doesn't get it because it's already taken by group 1, and there's no more lesson to fill it.
+                There should be a check to see if this is the last lesson, at which point if you cant take the most desired subject, then pick a subject, and find a previous lesson to swap the two.
+                This way you can the right amount of each lesson.
+                 */
                 try {
                     Subject selectedSubject = selectSubjectForGroup(g, subjectRepresentationPercentages, avlbTeachers, avlbClassrooms);
                     Teacher selectedTeacher = selectedSubject.getQualifiedTeachers().stream().filter(avlbTeachers::contains).collect(Collectors.toList()).get(0);
@@ -130,11 +134,10 @@ public class RosterGenerator {
      */
     public HashMap<Subject, Float[]> getSubjectRepresentationPercentages(Group group) {
         HashMap<Subject, Float[]> subjectRepresentationPercentages = new HashMap<>();
-        Roster roster = group.getRoster();
         for (Subject s : currentSubjects) {
             float desiredSubjectRep = (float) s.getWeight() / Subject.TOTAL_WEIGHT_DIST;
-            if (roster.getLessonsList().stream().anyMatch(l -> l.getSubject() == s)) {
-                float currSubjectRep = (float) roster.getSubjectOccurrence(s) / Roster.LESSONS_PER_WEEK;
+            if (group.getLessonsList().stream().anyMatch(l -> l.getSubject() == s)) {
+                float currSubjectRep = (float) group.getSubjectOccurrence(s) / Roster.LESSONS_PER_WEEK;
                 subjectRepresentationPercentages.put(s, new Float[]{currSubjectRep, desiredSubjectRep});
             } else {
                 subjectRepresentationPercentages.put(s, new Float[]{0.0f, desiredSubjectRep});
@@ -146,7 +149,7 @@ public class RosterGenerator {
     public ArrayList<Teacher> getAvailableTeachersForPeriod(Period period) {
         ArrayList<Teacher> availableTeachers = new ArrayList<>();
         for (Teacher t : teachers) {
-            if (t.getRoster().getLessonsList().stream().noneMatch(l -> l.getPeriod() == period)) {
+            if (t.getLessonsList().stream().noneMatch(l -> l.getPeriod() == period)) {
                 availableTeachers.add(t);
             } else {
                 System.out.printf("%s not available%n", t.getName() + " on " + period.getDayString() + ", " + period.getBlockString());
@@ -158,7 +161,7 @@ public class RosterGenerator {
     public ArrayList<Classroom> getAvailableClassroomsForPeriod(Period p) {
         ArrayList<Classroom> availableClassrooms = new ArrayList<>();
         for (Classroom c : classrooms) {
-            if (c.getRoster().getLessonsList().stream().noneMatch(l -> l.getPeriod() == p)) {
+            if (c.getLessonsList().stream().noneMatch(l -> l.getPeriod() == p)) {
                 availableClassrooms.add(c);
             }
         }

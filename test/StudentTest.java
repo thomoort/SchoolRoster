@@ -58,7 +58,7 @@ public class StudentTest {
     public void testStudentGroupRoster() {
         Student s = new Student("Thom", 1998, g1);
         Lesson lesson = new Lesson(teacher, g1, classroom, subject, period);
-        g1.addToRoster(lesson);
+        g1.addLesson(lesson);
         assertSame(s.getGroupRoster(), g1.getRoster());
     }
 

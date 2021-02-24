@@ -115,10 +115,10 @@ public class TeacherTest {
 
     @Test
     public void testAddLesson() {
-        t1.addToRoster(lesson);
-        assertSame(t1.getRoster().getLessonsList().get(0), lesson);
-        t1.removeFromRoster(lesson);
-        assertTrue(t1.getRoster().getLessonsList().isEmpty());
+        t1.addLesson(lesson);
+        assertSame(t1.getLessonsList().get(0), lesson);
+        t1.removeLesson(lesson);
+        assertTrue(t1.getLessonsList().isEmpty());
     }
 
 }

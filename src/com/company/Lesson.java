@@ -47,18 +47,18 @@ public class Lesson {
     }
 
     public void assignLessonToOthers() {
-        teacher.addToRoster(this);
-        classroom.addToRoster(this);
+        teacher.addLesson(this);
+        classroom.addLesson(this);
         if (group != null) {
-            group.addToRoster(this);
+            group.addLesson(this);
         }
     }
 
     public void removeLessonFromOthers() {
-        teacher.removeFromRoster(this);
-        classroom.removeFromRoster(this);
+        teacher.removeLesson(this);
+        classroom.removeLesson(this);
         if (group != null) {
-            group.removeFromRoster(this);
+            group.removeLesson(this);
         }
         this.teacher = null;
         this.group = null;

@@ -50,23 +50,23 @@ public class RosterTest {
          * The students should then have identical rosters, because student now also has lesson 2, and student 2 keeps it.
          */
 
-        group.addToRoster(l1);
-        student2.getRoster().addLesson(l2);
+        group.addLesson(l1);
+        student2.addLesson(l2);
 
         assertNotSame(student.getRoster(), student2.getRoster());
         assertSame(student.getGroup().getRoster(), student2.getGroup().getRoster());
 
-        assertEquals(student.getRoster().getLessonsForDayList(Period.Day.MONDAY).size(), 1);
-        assertEquals(student2.getRoster().getLessonsForDayList(Period.Day.MONDAY).size(),2);
+        assertEquals(student.getLessonsForDayList(Period.Day.MONDAY).size(), 1);
+        assertEquals(student2.getLessonsForDayList(Period.Day.MONDAY).size(),2);
 
         assertNull(l2.getGroup());
         l2.setGroup(group);
         assertSame(student.getGroup(), l2.getGroup());
         assertNotNull(l2.getGroup());
-        group.getRoster().addLesson(l2);
+        group.addLesson(l2);
 
-        assertEquals(group.getRoster().getLessonsForDayList(Period.Day.MONDAY).size(), 2);
-        assertArrayEquals(student.getRoster().getLessons(), student2.getRoster().getLessons());
+        assertEquals(group.getLessonsForDayList(Period.Day.MONDAY).size(), 2);
+        assertArrayEquals(student.getLessons(), student2.getLessons());
         assertNotSame(student.getRoster(), student2.getRoster());
         assertSame(student.getGroup().getRoster(), student2.getGroup().getRoster());
 

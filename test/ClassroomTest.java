@@ -26,21 +26,21 @@ public class ClassroomTest {
 
     @Test
     public void testClassroomRoster() {
-        assertTrue(classroom.getRoster().getLessonsList().isEmpty());
+        assertTrue(classroom.getLessonsList().isEmpty());
 
         Lesson l1 = new Lesson(teacher, group, classroom, subject, period);
-        classroom.addToRoster(l1);
+        classroom.addLesson(l1);
 
-        assertSame(classroom.getRoster().getLessonsList().get(0), l1);
+        assertSame(classroom.getLessonsList().get(0), l1);
     }
 
     @Test
     public void testAddAndRemoveLessonFromRoster() {
         Lesson l1 = new Lesson(teacher, group, classroom, subject, period);
         l1.assignLessonToOthers();
-        assertSame(classroom.getRoster().getLessonsList().get(0), l1);
-        classroom.removeFromRoster(l1);
-        assertSame(classroom.getRoster().getLessonsList().size(), 0);
+        assertSame(classroom.getLessonsList().get(0), l1);
+        classroom.removeLesson(l1);
+        assertSame(classroom.getLessonsList().size(), 0);
     }
 
 }

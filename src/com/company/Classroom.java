@@ -1,6 +1,6 @@
 package com.company;
 
-public class Classroom {
+public class Classroom extends Roster{
 
     private String code;
     private ClassroomType classroomType;
@@ -19,16 +19,5 @@ public class Classroom {
         return classroomType;
     }
 
-    public void addToRoster(Lesson l) {
-        roster.addLesson(l);
-    }
-
-    public void removeFromRoster(Lesson lesson) {
-        roster.removeLesson(lesson);
-    }
-
-    public Roster getRoster() {
-        return roster;
-    }
 
 }

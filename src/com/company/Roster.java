@@ -13,6 +13,10 @@ public class Roster {
 
     }
 
+    public Roster getRoster() {
+        return this;
+    }
+
     public Lesson[][] getLessons() {
         return lessons;
     }

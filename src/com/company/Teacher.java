@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class Teacher {
+public class Teacher extends Roster{
 
     private final String name;
     private final int birthYear;
@@ -42,16 +42,6 @@ public class Teacher {
     public ArrayList<Subject> getAssignedSubjects() {
         return assignedSubjects;
     }
-
-    public Roster getRoster() {
-        return roster;
-    }
-
-    public void addToRoster(Lesson lesson) {
-        roster.addLesson(lesson);
-    }
-
-    public void removeFromRoster(Lesson lesson) { roster.removeLesson(lesson);}
 
     /**
      * Adds the subject to this teachers' assigned subjects.

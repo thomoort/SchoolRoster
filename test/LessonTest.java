@@ -13,9 +13,9 @@ public class LessonTest {
     @Test
     public void createLessonAndAssign() {
         Lesson lesson = new Lesson(teacher, group, classroom, subject, period);
-        assertTrue(teacher.getRoster().getLessonsList().isEmpty());
+        assertTrue(teacher.getLessonsList().isEmpty());
         lesson.assignLessonToOthers();
-        assertSame(lesson, teacher.getRoster().getLessonsList().get(0));
+        assertSame(lesson, teacher.getLessonsList().get(0));
         assertSame(lesson.getTeacher(), teacher);
         assertSame(lesson.getClassroom(), classroom);
         assertSame(lesson.getSubject(), subject);
@@ -27,22 +27,22 @@ public class LessonTest {
     public void removeLessonFromOthers() {
         Lesson lesson = new Lesson(teacher, group, classroom, subject, period);
         lesson.assignLessonToOthers();
-        assertSame(lesson, teacher.getRoster().getLessonsList().get(0));
+        assertSame(lesson, teacher.getLessonsList().get(0));
         lesson.removeLessonFromOthers();
-        assertFalse(teacher.getRoster().getLessonsList().contains(lesson));
-        assertFalse(classroom.getRoster().getLessonsList().contains(lesson));
-        assertFalse(group.getRoster().getLessonsList().contains(lesson));
+        assertFalse(teacher.getLessonsList().contains(lesson));
+        assertFalse(classroom.getLessonsList().contains(lesson));
+        assertFalse(group.getLessonsList().contains(lesson));
     }
 
     @Test
     public void testAddAndRemoveWithoutGroup() {
         Lesson lesson = new Lesson(teacher, classroom, subject, period);
         lesson.assignLessonToOthers();
-        assertFalse(group.getRoster().getLessonsList().contains(lesson));
-        assertTrue(teacher.getRoster().getLessonsList().contains(lesson));
+        assertFalse(group.getLessonsList().contains(lesson));
+        assertTrue(teacher.getLessonsList().contains(lesson));
 
         lesson.removeLessonFromOthers();
-        assertFalse(teacher.getRoster().getLessonsList().contains(lesson));
+        assertFalse(teacher.getLessonsList().contains(lesson));
         assertNull(lesson.getTeacher());
 
     }
